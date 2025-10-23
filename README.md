@@ -64,6 +64,20 @@ nextcall/
 - **Developer SDK:** For clients who want API access directly.
 
 ---
+## 🧭 System Architecture Flow
+
+flowchart TD
+    A[User] --> B[Next.js Frontend<br/>Devtinder]
+    B --> C[Express.js Backend<br/>Node.js + REST API]
+    C --> D[(PostgreSQL / MongoDB<br/>Database)]
+    C --> E[Redis Cache<br/>Optional]
+    C --> F[Docker Container]
+    F --> G[Ansible Deployment]
+    G --> H[Vercel / AWS EC2<br/>Deployment]
+    H --> I[Monitoring via Nagios]
+<img width="863" height="844" alt="image" src="https://github.com/user-attachments/assets/72558360-9050-46ef-9507-e979677d9fb6" />
+
+---
 
 ## 🚀 Setup
 
@@ -203,6 +217,8 @@ Every push to `main` → Build → Test → Dockerize → Push → Deploy.
 - [ ] Self-hosted Convex alternative for enterprise clients
 
 ---
+
+
 
 ## 🧍‍♂️ Founder’s Vision
 

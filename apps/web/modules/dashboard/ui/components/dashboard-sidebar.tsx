@@ -25,6 +25,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@workspace/ui/components/sidebar';
+import { cn } from '@workspace/ui/lib/utils';
 
 const customerSupportItems = [
   {
@@ -90,7 +91,7 @@ export const DashboardSidebar = () => {
                     rootBox: 'w-full! h-8!',
                     avatarBox: 'size-4! rounded-sm!',
                     organizationSwitcherTrigger:
-                      'w-full! justify-start! group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!',
+                      'w-full! justify-start! group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! hover:bg-sidebar-accent! hover:dark:bg-gray-500/30!',
                     organizationPreview:
                       'group-data-[collapsible=icon]:justify-center! gap-2!',
                     organizationPreviewTextContainer:
@@ -116,6 +117,11 @@ export const DashboardSidebar = () => {
                     asChild
                     isActive={isActive(item.url)}
                     tooltip={item.title}
+                    className={cn(
+                      'hover:dark:bg-gray-500/30!',
+                      isActive(item.url) &&
+                        'bg-gradient-to-b from-sidebar-primary to-[#0b63f3] text-sidebar-primary-foreground! hover:to-[#0b63f3]/90!'
+                    )}
                   >
                     <Link href={item.url}>
                       <item.icon className='size-4' />
@@ -138,6 +144,11 @@ export const DashboardSidebar = () => {
                     asChild
                     isActive={isActive(item.url)}
                     tooltip={item.title}
+                    className={cn(
+                      'hover:dark:bg-gray-500/30!',
+                      isActive(item.url) &&
+                        'bg-gradient-to-b from-sidebar-primary to-[#0b63f3] text-sidebar-primary-foreground! hover:to-[#0b63f3]/90!'
+                    )}
                   >
                     <Link href={item.url}>
                       <item.icon className='size-4' />
@@ -160,6 +171,11 @@ export const DashboardSidebar = () => {
                     asChild
                     isActive={isActive(item.url)}
                     tooltip={item.title}
+                    className={cn(
+                      'hover:dark:bg-gray-500/30!',
+                      isActive(item.url) &&
+                        'bg-gradient-to-b from-sidebar-primary to-[#0b63f3] text-sidebar-primary-foreground! hover:to-[#0b63f3]/90!'
+                    )}
                   >
                     <Link href={item.url}>
                       <item.icon className='size-4' />
@@ -180,7 +196,7 @@ export const DashboardSidebar = () => {
               elements: {
                 rootBox: 'w-full! h-8!',
                 userButtonTrigger:
-                  'w-full! p-2! hover:bg-sidebar-accent! hover:text-sidebar-accent-foreground! group-data-[collapsible:icon]:size-8! group-data-[collapsible:icon]:p-2',
+                  'w-full! p-2! hover:bg-sidebar-accent! hover:dark:bg-gray-500/30! group-data-[collapsible:icon]:size-8! group-data-[collapsible:icon]:p-2',
                 userButtonBox:
                   'w-full! flex-row-reverse! justify-end! gap-2! group-data-[collapsible=icon]:justify-center! text-sidebar-foreground!',
                 userButtonOuterIdentifier:

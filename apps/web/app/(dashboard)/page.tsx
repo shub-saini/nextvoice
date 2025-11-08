@@ -8,11 +8,21 @@ import {
   Unauthenticated,
 } from 'convex/react';
 import { api } from '@workspace/backend/_generated/api';
-import { OrganizationSwitcher, SignInButton, UserButton } from '@clerk/nextjs';
+import {
+  OrganizationSwitcher,
+  SignInButton,
+  useOrganization,
+  UserButton,
+  useUser,
+} from '@clerk/nextjs';
 
 export default function Page() {
   const users = useQuery(api.users.getMany);
   const addUser = useMutation(api.users.add);
+
+  const { organization } = useOrganization();
+  const id = organization?.id;
+  console.log(id);
 
   return (
     <>

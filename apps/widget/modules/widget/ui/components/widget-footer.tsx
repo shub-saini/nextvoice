@@ -21,9 +21,9 @@ export const Widgetfooter = () => {
         size={'icon'}
         variant={'ghost'}
       >
-        <InboxIcon
+        {/* <InboxIcon
           className={cn('size-5', screen === 'inbox' && 'text-primary')}
-        />
+        /> */}
       </Button>
     </footer>
   );

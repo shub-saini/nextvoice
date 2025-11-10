@@ -22,7 +22,6 @@ import {
 } from '@workspace/ui/components/shadcn-io/ai/conversation';
 import {
   Message,
-  MessageAvatar,
   MessageContent,
 } from '@workspace/ui/components/shadcn-io/ai/message';
 import { Form, FormField } from '@workspace/ui/components/form';

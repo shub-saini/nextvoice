@@ -23,9 +23,9 @@ export const useInfiniteScroll = ({
 
   useEffect(() => {
     const topElement = topElementRef.current;
-    if (!topElement && observerEnabled) {
-      return;
-    }
+
+    // If observer is disabled or element not yet mounted, exit early
+    if (!observerEnabled || !topElement) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {

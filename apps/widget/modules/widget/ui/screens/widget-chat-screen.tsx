@@ -163,7 +163,10 @@ export const WidgetChatScreen = () => {
             name='message'
             render={({ field }) => (
               <PromptInputTextarea
-                disabled={conversation?.status === 'resolved'}
+                disabled={
+                  conversation?.status === 'resolved' ||
+                  form.formState.isSubmitting
+                }
                 onChange={field.onChange}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {

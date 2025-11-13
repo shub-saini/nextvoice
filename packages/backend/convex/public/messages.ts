@@ -3,6 +3,9 @@ import { action, query } from '../_generated/server';
 import { internal } from '../_generated/api';
 import { supportAgent } from '../system/ai/agent/supportAgent';
 import { paginationOptsValidator } from 'convex/server';
+import { resolveConversation } from '../system/ai/tools/resolveConversation';
+import { escalateConversation } from '../system/ai/tools/escalateConversation';
+import { isGeneratorFunction } from 'util/types';
 
 export const create = action({
   args: {
@@ -46,13 +49,50 @@ export const create = action({
       });
     }
 
-    await supportAgent.generateText(
-      ctx,
-      { threadId: args.threadId },
-      {
-        prompt: args.prompt,
+    const shouldTriggerAgent = conversation.status === 'unresolved';
+
+    if (shouldTriggerAgent) {
+      const assistantResponse = await supportAgent.generateText(
+        ctx,
+        { threadId: args.threadId },
+        {
+          prompt: args.prompt,
+          tools: { resolveConversation, escalateConversation },
+        }
+      );
+
+      if (
+        assistantResponse.toolCalls &&
+        assistantResponse.toolCalls.length > 0
+      ) {
+        for (const toolCall of assistantResponse.toolCalls) {
+          if (toolCall.toolName === 'escalateConversation') {
+            await supportAgent.saveMessage(ctx, {
+              threadId: args.threadId,
+              message: {
+                role: 'assistant',
+                content: 'Conversation Escalated to a human operator',
+              },
+            });
+          }
+
+          if (toolCall.toolName === 'resolveConversation') {
+            await supportAgent.saveMessage(ctx, {
+              threadId: args.threadId,
+              message: {
+                role: 'assistant',
+                content: 'Conversation resoved.',
+              },
+            });
+          }
+        }
       }
-    );
+    } else {
+      await supportAgent.saveMessage(ctx, {
+        threadId: args.threadId,
+        prompt: args.prompt,
+      });
+    }
   },
 });
 

@@ -24,7 +24,7 @@ export const useInfiniteScroll = ({
   useEffect(() => {
     const topElement = topElementRef.current;
 
-    // If observer is disabled or element not yet mounted, exit early
+    // If observer is disabled or element not yet mounted, exit early. So user can press loadMore button manually(InfiniteScrollTrigger)
     if (!observerEnabled || !topElement) return;
 
     const observer = new IntersectionObserver(

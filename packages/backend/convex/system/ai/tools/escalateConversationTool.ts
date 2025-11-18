@@ -3,7 +3,7 @@ import z from 'zod';
 import { internal } from '../../../_generated/api';
 import { supportAgent } from '../agent/supportAgent';
 
-export const escalateConversation = createTool({
+export const escalateConversationTool = createTool({
   description: 'Escalate a conversation',
   args: z.object({}),
   handler: async (ctx) => {
@@ -15,13 +15,13 @@ export const escalateConversation = createTool({
       threadId: ctx.threadId,
     });
 
-    // await supportAgent.saveMessage(ctx, {
-    //   threadId: ctx.threadId,
-    //   message: {
-    //     role: 'assistant',
-    //     content: 'Conversation Escalated to a human operator',
-    //   },
-    // });
+    await supportAgent.saveMessage(ctx, {
+      threadId: ctx.threadId,
+      message: {
+        role: 'assistant',
+        content: 'Conversation Escalated to a human operator',
+      },
+    });
 
     return 'Conversation Escalated to a human operator';
   },

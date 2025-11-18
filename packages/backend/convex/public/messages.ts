@@ -3,9 +3,9 @@ import { action, query } from '../_generated/server';
 import { internal } from '../_generated/api';
 import { supportAgent } from '../system/ai/agent/supportAgent';
 import { paginationOptsValidator } from 'convex/server';
-import { resolveConversation } from '../system/ai/tools/resolveConversation';
-import { escalateConversation } from '../system/ai/tools/escalateConversation';
-import { isGeneratorFunction } from 'util/types';
+import { resolveConversationTool } from '../system/ai/tools/resolveConversationTool';
+import { escalateConversationTool } from '../system/ai/tools/escalateConversationTool';
+import { searchTool } from '../system/ai/tools/searchTool';
 
 export const create = action({
   args: {
@@ -57,36 +57,50 @@ export const create = action({
         { threadId: args.threadId },
         {
           prompt: args.prompt,
-          tools: { resolveConversation, escalateConversation },
+          tools: {
+            resolveConversationTool,
+            escalateConversationTool,
+            searchTool,
+          },
         }
       );
 
-      if (
-        assistantResponse.toolCalls &&
-        assistantResponse.toolCalls.length > 0
-      ) {
-        for (const toolCall of assistantResponse.toolCalls) {
-          if (toolCall.toolName === 'escalateConversation') {
-            await supportAgent.saveMessage(ctx, {
-              threadId: args.threadId,
-              message: {
-                role: 'assistant',
-                content: 'Conversation Escalated to a human operator',
-              },
-            });
-          }
+      // if (
+      //   assistantResponse.toolCalls &&
+      //   assistantResponse.toolCalls.length > 0
+      // ) {
+      //   for (const toolCall of assistantResponse.toolCalls) {
+      //     if (toolCall.toolName === 'escalateConversation') {
+      //       await supportAgent.saveMessage(ctx, {
+      //         threadId: args.threadId,
+      //         message: {
+      //           role: 'assistant',
+      //           content: 'Conversation Escalated to a human operator',
+      //         },
+      //       });
+      //     }
 
-          if (toolCall.toolName === 'resolveConversation') {
-            await supportAgent.saveMessage(ctx, {
-              threadId: args.threadId,
-              message: {
-                role: 'assistant',
-                content: 'Conversation resoved.',
-              },
-            });
-          }
-        }
-      }
+      //     if (toolCall.toolName === 'resolveConversation') {
+      //       await supportAgent.saveMessage(ctx, {
+      //         threadId: args.threadId,
+      //         message: {
+      //           role: 'assistant',
+      //           content: 'Conversation resoved.',
+      //         },
+      //       });
+      //     }
+
+      //     if (toolCall.toolName === 'search') {
+      //       await supportAgent.saveMessage(ctx, {
+      //         threadId: args.threadId,
+      //         message: {
+      //           role: 'assistant',
+      //           content: 'Refer to the information above',
+      //         },
+      //       });
+      //     }
+      //   }
+      // }
     } else {
       await supportAgent.saveMessage(ctx, {
         threadId: args.threadId,

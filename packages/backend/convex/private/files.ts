@@ -1,12 +1,13 @@
 import { ConvexError, v } from 'convex/values';
 import { action, mutation, query, QueryCtx } from '../_generated/server';
-import { guessMimeType } from '@convex-dev/agent';
 import { extractTextContent } from '../lib/extractTextContent';
 import rag from '../system/ai/rag';
 import {
   contentHashFromArrayBuffer,
   Entry,
   EntryId,
+  guessMimeTypeFromContents,
+  guessMimeTypeFromExtension,
   vEntryId,
 } from '@convex-dev/rag';
 import { Id } from '../_generated/dataModel';
@@ -100,7 +101,7 @@ export const addFile = action({
 
     const { bytes, fileName, category } = args;
 
-    const mimeType = args.mimeType || guessMimeType(bytes);
+    const mimeType = args.mimeType || guessMimeType(fileName, bytes);
     const blob = new Blob([bytes], { type: mimeType });
 
     const storageId = await ctx.storage.store(blob);
@@ -190,6 +191,14 @@ export const list = query({
     };
   },
 });
+
+function guessMimeType(fileName: string, bytes: ArrayBuffer): string {
+  return (
+    guessMimeTypeFromExtension(fileName) ||
+    guessMimeTypeFromContents(bytes) ||
+    'application/octet-stream'
+  );
+}
 
 export type PublicFile = {
   id: EntryId;

@@ -15,15 +15,13 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-} from '@workspace/ui/components/shadcn-io/ai/prompt-input';
+} from '@workspace/ui/components/ai/prompt-input';
+import { Response } from '@workspace/ui/components/ai/response';
 import {
   Conversation,
   ConversationContent,
-} from '@workspace/ui/components/shadcn-io/ai/conversation';
-import {
-  Message,
-  MessageContent,
-} from '@workspace/ui/components/shadcn-io/ai/message';
+} from '@workspace/ui/components/ai/conversation';
+import { Message, MessageContent } from '@workspace/ui/components/ai/message';
 import { Form, FormField } from '@workspace/ui/components/form';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -160,7 +158,21 @@ export const ConversationIdView = ({
               from={message.role === 'user' ? 'assistant' : 'user'}
               key={message.id}
             >
-              <MessageContent>{message.text}</MessageContent>
+              <MessageContent>
+                <Response>{message.text}</Response>
+                {/* {message.parts?.map((part, i) => {
+                  switch (part.type) {
+                    case 'text':
+                      return (
+                        <Response key={`${message.id}-${i}`}>
+                          {part.text}
+                        </Response>
+                      );
+                    default:
+                      return null;
+                  }
+                })} */}
+              </MessageContent>
               {message.role === 'user' && (
                 <DicebearAvatar
                   seed={conversation?.contactSession._id ?? 'user'}

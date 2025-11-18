@@ -19,11 +19,8 @@ import { z } from 'zod';
 import {
   Conversation,
   ConversationContent,
-} from '@workspace/ui/components/shadcn-io/ai/conversation';
-import {
-  Message,
-  MessageContent,
-} from '@workspace/ui/components/shadcn-io/ai/message';
+} from '@workspace/ui/components/ai/conversation';
+import { Message, MessageContent } from '@workspace/ui/components/ai/message';
 import { Form, FormField } from '@workspace/ui/components/form';
 import {
   PromptInput,
@@ -31,10 +28,11 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-} from '@workspace/ui/components/shadcn-io/ai/prompt-input';
+} from '@workspace/ui/components/ai/prompt-input';
 import { useInfiniteScroll } from '@workspace/ui/hooks/use-infinite-scroll';
 import { InfiniteScrollTrigger } from '@workspace/ui/components/infinite-scroll-trigger';
 import { DicebearAvatar } from '@workspace/ui/components/dicebear-avatar';
+import { Response } from '@workspace/ui/components/ai/response';
 
 const formSchema = z.object({
   message: z.string().min(1, 'Message is required'),
@@ -134,9 +132,7 @@ export const WidgetChatScreen = () => {
                 className='flex items-center'
               >
                 <MessageContent>
-                  {message.text}
-                  {/* <Response>
-                  </Response> */}
+                  <Response>{message.text}</Response>
                 </MessageContent>
                 {message.role === 'assistant' && (
                   <DicebearAvatar

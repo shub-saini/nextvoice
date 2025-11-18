@@ -3,7 +3,7 @@ import z from 'zod';
 import { internal } from '../../../_generated/api';
 import { supportAgent } from '../agent/supportAgent';
 
-export const resolveConversation = createTool({
+export const resolveConversationTool = createTool({
   description: 'Resolve a conversation',
   args: z.object({}),
   handler: async (ctx) => {
@@ -15,13 +15,13 @@ export const resolveConversation = createTool({
       threadId: ctx.threadId,
     });
 
-    // await supportAgent.saveMessage(ctx, {
-    //   threadId: ctx.threadId,
-    //   message: {
-    //     role: 'assistant',
-    //     content: 'Conversation resoved.',
-    //   },
-    // });
+    await supportAgent.saveMessage(ctx, {
+      threadId: ctx.threadId,
+      message: {
+        role: 'assistant',
+        content: 'Conversation resolved.',
+      },
+    });
 
     return 'Conversation resolved';
   },

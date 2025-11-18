@@ -3,12 +3,11 @@ import { generateText } from 'ai';
 import type { StorageActionWriter } from 'convex/server';
 import { assert } from 'convex-helpers';
 import { Id } from '../_generated/dataModel';
-import { arrayBuffer } from 'stream/consumers';
 
 const AI_MODELS = {
-  image: openai.chat('gpt-4.1-mini'),
-  pdf: openai.chat('gpt-4.1'),
-  html: openai.chat('gpt-4.1'),
+  image: openai.chat('gpt-4o-mini'),
+  pdf: openai.chat('gpt-4o-mini'),
+  html: openai.chat('gpt-4o'),
 };
 
 const SUPPORTED_IMAGE_TYPES = [
@@ -46,9 +45,9 @@ export async function extractTextContent(
     return extractImageText(url);
   }
 
-  if (mimeType.toLowerCase().includes('pdf')) {
-    return extractPdfText(url, mimeType, fileName);
-  }
+  // if (mimeType.toLowerCase().includes('pdf')) {
+  //   return extractPdfText(url, mimeType, fileName);
+  // }
 
   if (mimeType.toLowerCase().includes('text')) {
     return extractTextFileContent(ctx, storageId, bytes, mimeType);
@@ -111,32 +110,32 @@ async function extractImageText(url: string): Promise<string> {
   return result.text;
 }
 
-async function extractPdfText(
-  url: string,
-  mimeType: string,
-  filename: string
-): Promise<string> {
-  const result = await generateText({
-    model: AI_MODELS.pdf,
-    system: SYSTEM_PROMPTS.pdf,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'file',
-            data: new URL(url),
-            mediaType: mimeType,
-            filename,
-          },
-          {
-            type: 'text',
-            text: "Extract the text from the PDF and print it without explaining you'll do so.",
-          },
-        ],
-      },
-    ],
-  });
+// async function extractPdfText(
+//   url: string,
+//   mimeType: string,
+//   filename: string
+// ): Promise<string> {
+//   const result = await generateText({
+//     model: AI_MODELS.pdf,
+//     system: SYSTEM_PROMPTS.pdf,
+//     messages: [
+//       {
+//         role: 'user',
+//         content: [
+//           {
+//             type: 'file',
+//             data: new URL(url),
+//             mediaType: mimeType,
+//             filename,
+//           },
+//           {
+//             type: 'text',
+//             text: "Extract the text from the PDF and print it without explaining you'll do so.",
+//           },
+//         ],
+//       },
+//     ],
+//   });
 
-  return result.text;
-}
+//   return result.text;
+// }

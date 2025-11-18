@@ -38,8 +38,6 @@ export const FilesView = () => {
     { initialNumItems: 10 }
   );
 
-  console.log(files);
-
   const {
     topElementRef,
     handleLoadMore,

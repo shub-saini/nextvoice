@@ -8,28 +8,34 @@
  * @module
  */
 
-import type * as lib_extractTextContent from '../lib/extractTextContent.js';
-import type * as private_conversations from '../private/conversations.js';
-import type * as private_files from '../private/files.js';
-import type * as private_messages from '../private/messages.js';
-import type * as public_contactSessions from '../public/contactSessions.js';
-import type * as public_conversations from '../public/conversations.js';
-import type * as public_messages from '../public/messages.js';
-import type * as public_organizations from '../public/organizations.js';
-import type * as system_ai_agent_supportAgent from '../system/ai/agent/supportAgent.js';
-import type * as system_ai_rag from '../system/ai/rag.js';
-import type * as system_ai_tools_escalateConversation from '../system/ai/tools/escalateConversationTool.js';
-import type * as system_ai_tools_resolveConversation from '../system/ai/tools/resolveConversationTool.js';
-import type * as system_ai_tools_search from '../system/ai/tools/searchTool.js';
-import type * as system_contactSessions from '../system/contactSessions.js';
-import type * as system_conversations from '../system/conversations.js';
-import type * as users from '../users.js';
+import type * as lib_extractTextContent from "../lib/extractTextContent.js";
+import type * as lib_secrets from "../lib/secrets.js";
+import type * as private_conversations from "../private/conversations.js";
+import type * as private_files from "../private/files.js";
+import type * as private_messages from "../private/messages.js";
+import type * as private_plugins from "../private/plugins.js";
+import type * as private_secrets from "../private/secrets.js";
+import type * as public_contactSessions from "../public/contactSessions.js";
+import type * as public_conversations from "../public/conversations.js";
+import type * as public_messages from "../public/messages.js";
+import type * as public_organizations from "../public/organizations.js";
+import type * as system_ai_agent_supportAgent from "../system/ai/agent/supportAgent.js";
+import type * as system_ai_constants from "../system/ai/constants.js";
+import type * as system_ai_rag from "../system/ai/rag.js";
+import type * as system_ai_tools_escalateConversationTool from "../system/ai/tools/escalateConversationTool.js";
+import type * as system_ai_tools_resolveConversationTool from "../system/ai/tools/resolveConversationTool.js";
+import type * as system_ai_tools_searchTool from "../system/ai/tools/searchTool.js";
+import type * as system_contactSessions from "../system/contactSessions.js";
+import type * as system_conversations from "../system/conversations.js";
+import type * as system_plugin from "../system/plugin.js";
+import type * as system_secrets from "../system/secrets.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
-} from 'convex/server';
+} from "convex/server";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -40,63 +46,69 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  'lib/extractTextContent': typeof lib_extractTextContent;
-  'private/conversations': typeof private_conversations;
-  'private/files': typeof private_files;
-  'private/messages': typeof private_messages;
-  'public/contactSessions': typeof public_contactSessions;
-  'public/conversations': typeof public_conversations;
-  'public/messages': typeof public_messages;
-  'public/organizations': typeof public_organizations;
-  'system/ai/agent/supportAgent': typeof system_ai_agent_supportAgent;
-  'system/ai/rag': typeof system_ai_rag;
-  'system/ai/tools/escalateConversation': typeof system_ai_tools_escalateConversation;
-  'system/ai/tools/resolveConversation': typeof system_ai_tools_resolveConversation;
-  'system/ai/tools/search': typeof system_ai_tools_search;
-  'system/contactSessions': typeof system_contactSessions;
-  'system/conversations': typeof system_conversations;
+  "lib/extractTextContent": typeof lib_extractTextContent;
+  "lib/secrets": typeof lib_secrets;
+  "private/conversations": typeof private_conversations;
+  "private/files": typeof private_files;
+  "private/messages": typeof private_messages;
+  "private/plugins": typeof private_plugins;
+  "private/secrets": typeof private_secrets;
+  "public/contactSessions": typeof public_contactSessions;
+  "public/conversations": typeof public_conversations;
+  "public/messages": typeof public_messages;
+  "public/organizations": typeof public_organizations;
+  "system/ai/agent/supportAgent": typeof system_ai_agent_supportAgent;
+  "system/ai/constants": typeof system_ai_constants;
+  "system/ai/rag": typeof system_ai_rag;
+  "system/ai/tools/escalateConversationTool": typeof system_ai_tools_escalateConversationTool;
+  "system/ai/tools/resolveConversationTool": typeof system_ai_tools_resolveConversationTool;
+  "system/ai/tools/searchTool": typeof system_ai_tools_searchTool;
+  "system/contactSessions": typeof system_contactSessions;
+  "system/conversations": typeof system_conversations;
+  "system/plugin": typeof system_plugin;
+  "system/secrets": typeof system_secrets;
   users: typeof users;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
 export declare const api: FilterApi<
   typeof fullApiWithMounts,
-  FunctionReference<any, 'public'>
+  FunctionReference<any, "public">
 >;
 export declare const internal: FilterApi<
   typeof fullApiWithMounts,
-  FunctionReference<any, 'internal'>
+  FunctionReference<any, "internal">
 >;
 
 export declare const components: {
   agent: {
     apiKeys: {
       destroy: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { apiKey?: string; name?: string },
-        | 'missing'
-        | 'deleted'
-        | 'name mismatch'
-        | 'must provide either apiKey or name'
+        | "missing"
+        | "deleted"
+        | "name mismatch"
+        | "must provide either apiKey or name"
       >;
       issue: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { name?: string },
         string
       >;
       validate: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         { apiKey: string },
         boolean
       >;
     };
     files: {
       addFile: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           filename?: string;
           hash: string;
@@ -106,20 +118,20 @@ export declare const components: {
         { fileId: string; storageId: string }
       >;
       copyFile: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { fileId: string },
         null
       >;
       deleteFiles: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { fileIds: Array<string>; force?: boolean },
         Array<string>
       >;
       get: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         { fileId: string },
         null | {
           _creationTime: number;
@@ -133,8 +145,8 @@ export declare const components: {
         }
       >;
       getFilesToDelete: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           paginationOpts: {
             cursor: string | null;
@@ -161,16 +173,16 @@ export declare const components: {
         }
       >;
       useExistingFile: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { filename?: string; hash: string },
         null | { fileId: string; storageId: string }
       >;
     };
     messages: {
       addMessages: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           agentName?: string;
           embeddings?: {
@@ -193,13 +205,13 @@ export declare const components: {
             error?: string;
             fileIds?: Array<string>;
             finishReason?:
-              | 'stop'
-              | 'length'
-              | 'content-filter'
-              | 'tool-calls'
-              | 'error'
-              | 'other'
-              | 'unknown';
+              | "stop"
+              | "length"
+              | "content-filter"
+              | "tool-calls"
+              | "error"
+              | "other"
+              | "unknown";
             id?: string;
             message:
               | {
@@ -212,7 +224,7 @@ export declare const components: {
                               Record<string, any>
                             >;
                             text: string;
-                            type: 'text';
+                            type: "text";
                           }
                         | {
                             image: string | ArrayBuffer;
@@ -221,7 +233,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'image';
+                            type: "image";
                           }
                         | {
                             data: string | ArrayBuffer;
@@ -231,11 +243,11 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'file';
+                            type: "file";
                           }
                       >;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'user';
+                  role: "user";
                 }
               | {
                   content:
@@ -247,7 +259,7 @@ export declare const components: {
                               Record<string, any>
                             >;
                             text: string;
-                            type: 'text';
+                            type: "text";
                           }
                         | {
                             data: string | ArrayBuffer;
@@ -257,7 +269,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'file';
+                            type: "file";
                           }
                         | {
                             providerOptions?: Record<
@@ -266,7 +278,7 @@ export declare const components: {
                             >;
                             signature?: string;
                             text: string;
-                            type: 'reasoning';
+                            type: "reasoning";
                           }
                         | {
                             data: string;
@@ -274,7 +286,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'redacted-reasoning';
+                            type: "redacted-reasoning";
                           }
                         | {
                             args: any;
@@ -284,46 +296,46 @@ export declare const components: {
                             >;
                             toolCallId: string;
                             toolName: string;
-                            type: 'tool-call';
+                            type: "tool-call";
                           }
                       >;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'assistant';
+                  role: "assistant";
                 }
               | {
                   content: Array<{
                     args?: any;
                     experimental_content?: Array<
-                      | { text: string; type: 'text' }
-                      | { data: string; mimeType?: string; type: 'image' }
+                      | { text: string; type: "text" }
+                      | { data: string; mimeType?: string; type: "image" }
                     >;
                     isError?: boolean;
                     providerOptions?: Record<string, Record<string, any>>;
                     result: any;
                     toolCallId: string;
                     toolName: string;
-                    type: 'tool-result';
+                    type: "tool-result";
                   }>;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'tool';
+                  role: "tool";
                 }
               | {
                   content: string;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'system';
+                  role: "system";
                 };
             model?: string;
             provider?: string;
             providerMetadata?: Record<string, Record<string, any>>;
             reasoning?: string;
             reasoningDetails?: Array<
-              | { signature?: string; text: string; type: 'text' }
-              | { data: string; type: 'redacted' }
+              | { signature?: string; text: string; type: "text" }
+              | { data: string; type: "redacted" }
             >;
             sources?: Array<{
               id: string;
               providerOptions?: Record<string, Record<string, any>>;
-              sourceType: 'url';
+              sourceType: "url";
               title?: string;
               url: string;
             }>;
@@ -337,10 +349,10 @@ export declare const components: {
               | {
                   details?: string;
                   setting: string;
-                  type: 'unsupported-setting';
+                  type: "unsupported-setting";
                 }
-              | { details?: string; tool: any; type: 'unsupported-tool' }
-              | { message: string; type: 'other' }
+              | { details?: string; tool: any; type: "unsupported-tool" }
+              | { message: string; type: "other" }
             >;
           }>;
           pending?: boolean;
@@ -357,13 +369,13 @@ export declare const components: {
             error?: string;
             fileIds?: Array<string>;
             finishReason?:
-              | 'stop'
-              | 'length'
-              | 'content-filter'
-              | 'tool-calls'
-              | 'error'
-              | 'other'
-              | 'unknown';
+              | "stop"
+              | "length"
+              | "content-filter"
+              | "tool-calls"
+              | "error"
+              | "other"
+              | "unknown";
             id?: string;
             message?:
               | {
@@ -376,7 +388,7 @@ export declare const components: {
                               Record<string, any>
                             >;
                             text: string;
-                            type: 'text';
+                            type: "text";
                           }
                         | {
                             image: string | ArrayBuffer;
@@ -385,7 +397,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'image';
+                            type: "image";
                           }
                         | {
                             data: string | ArrayBuffer;
@@ -395,11 +407,11 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'file';
+                            type: "file";
                           }
                       >;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'user';
+                  role: "user";
                 }
               | {
                   content:
@@ -411,7 +423,7 @@ export declare const components: {
                               Record<string, any>
                             >;
                             text: string;
-                            type: 'text';
+                            type: "text";
                           }
                         | {
                             data: string | ArrayBuffer;
@@ -421,7 +433,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'file';
+                            type: "file";
                           }
                         | {
                             providerOptions?: Record<
@@ -430,7 +442,7 @@ export declare const components: {
                             >;
                             signature?: string;
                             text: string;
-                            type: 'reasoning';
+                            type: "reasoning";
                           }
                         | {
                             data: string;
@@ -438,7 +450,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'redacted-reasoning';
+                            type: "redacted-reasoning";
                           }
                         | {
                             args: any;
@@ -448,33 +460,33 @@ export declare const components: {
                             >;
                             toolCallId: string;
                             toolName: string;
-                            type: 'tool-call';
+                            type: "tool-call";
                           }
                       >;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'assistant';
+                  role: "assistant";
                 }
               | {
                   content: Array<{
                     args?: any;
                     experimental_content?: Array<
-                      | { text: string; type: 'text' }
-                      | { data: string; mimeType?: string; type: 'image' }
+                      | { text: string; type: "text" }
+                      | { data: string; mimeType?: string; type: "image" }
                     >;
                     isError?: boolean;
                     providerOptions?: Record<string, Record<string, any>>;
                     result: any;
                     toolCallId: string;
                     toolName: string;
-                    type: 'tool-result';
+                    type: "tool-result";
                   }>;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'tool';
+                  role: "tool";
                 }
               | {
                   content: string;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'system';
+                  role: "system";
                 };
             model?: string;
             order: number;
@@ -483,17 +495,17 @@ export declare const components: {
             providerOptions?: Record<string, Record<string, any>>;
             reasoning?: string;
             reasoningDetails?: Array<
-              | { signature?: string; text: string; type: 'text' }
-              | { data: string; type: 'redacted' }
+              | { signature?: string; text: string; type: "text" }
+              | { data: string; type: "redacted" }
             >;
             sources?: Array<{
               id: string;
               providerOptions?: Record<string, Record<string, any>>;
-              sourceType: 'url';
+              sourceType: "url";
               title?: string;
               url: string;
             }>;
-            status: 'pending' | 'success' | 'failed';
+            status: "pending" | "success" | "failed";
             stepOrder: number;
             text?: string;
             threadId: string;
@@ -508,29 +520,29 @@ export declare const components: {
               | {
                   details?: string;
                   setting: string;
-                  type: 'unsupported-setting';
+                  type: "unsupported-setting";
                 }
-              | { details?: string; tool: any; type: 'unsupported-tool' }
-              | { message: string; type: 'other' }
+              | { details?: string; tool: any; type: "unsupported-tool" }
+              | { message: string; type: "other" }
             >;
           }>;
         }
       >;
       commitMessage: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { messageId: string },
         null
       >;
       deleteByIds: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { messageIds: Array<string> },
         Array<string>
       >;
       deleteByOrder: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           endOrder: number;
           endStepOrder?: number;
@@ -541,8 +553,8 @@ export declare const components: {
         { isDone: boolean; lastOrder?: number; lastStepOrder?: number }
       >;
       getMessagesByIds: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         { messageIds: Array<string> },
         Array<null | {
           _creationTime: number;
@@ -552,13 +564,13 @@ export declare const components: {
           error?: string;
           fileIds?: Array<string>;
           finishReason?:
-            | 'stop'
-            | 'length'
-            | 'content-filter'
-            | 'tool-calls'
-            | 'error'
-            | 'other'
-            | 'unknown';
+            | "stop"
+            | "length"
+            | "content-filter"
+            | "tool-calls"
+            | "error"
+            | "other"
+            | "unknown";
           id?: string;
           message?:
             | {
@@ -568,24 +580,24 @@ export declare const components: {
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           text: string;
-                          type: 'text';
+                          type: "text";
                         }
                       | {
                           image: string | ArrayBuffer;
                           mimeType?: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'image';
+                          type: "image";
                         }
                       | {
                           data: string | ArrayBuffer;
                           filename?: string;
                           mimeType: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'file';
+                          type: "file";
                         }
                     >;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'user';
+                role: "user";
               }
             | {
                 content:
@@ -594,58 +606,58 @@ export declare const components: {
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           text: string;
-                          type: 'text';
+                          type: "text";
                         }
                       | {
                           data: string | ArrayBuffer;
                           filename?: string;
                           mimeType: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'file';
+                          type: "file";
                         }
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           signature?: string;
                           text: string;
-                          type: 'reasoning';
+                          type: "reasoning";
                         }
                       | {
                           data: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'redacted-reasoning';
+                          type: "redacted-reasoning";
                         }
                       | {
                           args: any;
                           providerOptions?: Record<string, Record<string, any>>;
                           toolCallId: string;
                           toolName: string;
-                          type: 'tool-call';
+                          type: "tool-call";
                         }
                     >;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'assistant';
+                role: "assistant";
               }
             | {
                 content: Array<{
                   args?: any;
                   experimental_content?: Array<
-                    | { text: string; type: 'text' }
-                    | { data: string; mimeType?: string; type: 'image' }
+                    | { text: string; type: "text" }
+                    | { data: string; mimeType?: string; type: "image" }
                   >;
                   isError?: boolean;
                   providerOptions?: Record<string, Record<string, any>>;
                   result: any;
                   toolCallId: string;
                   toolName: string;
-                  type: 'tool-result';
+                  type: "tool-result";
                 }>;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'tool';
+                role: "tool";
               }
             | {
                 content: string;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'system';
+                role: "system";
               };
           model?: string;
           order: number;
@@ -654,17 +666,17 @@ export declare const components: {
           providerOptions?: Record<string, Record<string, any>>;
           reasoning?: string;
           reasoningDetails?: Array<
-            | { signature?: string; text: string; type: 'text' }
-            | { data: string; type: 'redacted' }
+            | { signature?: string; text: string; type: "text" }
+            | { data: string; type: "redacted" }
           >;
           sources?: Array<{
             id: string;
             providerOptions?: Record<string, Record<string, any>>;
-            sourceType: 'url';
+            sourceType: "url";
             title?: string;
             url: string;
           }>;
-          status: 'pending' | 'success' | 'failed';
+          status: "pending" | "success" | "failed";
           stepOrder: number;
           text?: string;
           threadId: string;
@@ -676,18 +688,18 @@ export declare const components: {
           };
           userId?: string;
           warnings?: Array<
-            | { details?: string; setting: string; type: 'unsupported-setting' }
-            | { details?: string; tool: any; type: 'unsupported-tool' }
-            | { message: string; type: 'other' }
+            | { details?: string; setting: string; type: "unsupported-setting" }
+            | { details?: string; tool: any; type: "unsupported-tool" }
+            | { message: string; type: "other" }
           >;
         }>
       >;
       listMessagesByThreadId: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           excludeToolMessages?: boolean;
-          order: 'asc' | 'desc';
+          order: "asc" | "desc";
           paginationOpts?: {
             cursor: string | null;
             endCursor?: string | null;
@@ -696,7 +708,7 @@ export declare const components: {
             maximumRowsRead?: number;
             numItems: number;
           };
-          statuses?: Array<'pending' | 'success' | 'failed'>;
+          statuses?: Array<"pending" | "success" | "failed">;
           threadId: string;
           upToAndIncludingMessageId?: string;
         },
@@ -711,13 +723,13 @@ export declare const components: {
             error?: string;
             fileIds?: Array<string>;
             finishReason?:
-              | 'stop'
-              | 'length'
-              | 'content-filter'
-              | 'tool-calls'
-              | 'error'
-              | 'other'
-              | 'unknown';
+              | "stop"
+              | "length"
+              | "content-filter"
+              | "tool-calls"
+              | "error"
+              | "other"
+              | "unknown";
             id?: string;
             message?:
               | {
@@ -730,7 +742,7 @@ export declare const components: {
                               Record<string, any>
                             >;
                             text: string;
-                            type: 'text';
+                            type: "text";
                           }
                         | {
                             image: string | ArrayBuffer;
@@ -739,7 +751,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'image';
+                            type: "image";
                           }
                         | {
                             data: string | ArrayBuffer;
@@ -749,11 +761,11 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'file';
+                            type: "file";
                           }
                       >;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'user';
+                  role: "user";
                 }
               | {
                   content:
@@ -765,7 +777,7 @@ export declare const components: {
                               Record<string, any>
                             >;
                             text: string;
-                            type: 'text';
+                            type: "text";
                           }
                         | {
                             data: string | ArrayBuffer;
@@ -775,7 +787,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'file';
+                            type: "file";
                           }
                         | {
                             providerOptions?: Record<
@@ -784,7 +796,7 @@ export declare const components: {
                             >;
                             signature?: string;
                             text: string;
-                            type: 'reasoning';
+                            type: "reasoning";
                           }
                         | {
                             data: string;
@@ -792,7 +804,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'redacted-reasoning';
+                            type: "redacted-reasoning";
                           }
                         | {
                             args: any;
@@ -802,33 +814,33 @@ export declare const components: {
                             >;
                             toolCallId: string;
                             toolName: string;
-                            type: 'tool-call';
+                            type: "tool-call";
                           }
                       >;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'assistant';
+                  role: "assistant";
                 }
               | {
                   content: Array<{
                     args?: any;
                     experimental_content?: Array<
-                      | { text: string; type: 'text' }
-                      | { data: string; mimeType?: string; type: 'image' }
+                      | { text: string; type: "text" }
+                      | { data: string; mimeType?: string; type: "image" }
                     >;
                     isError?: boolean;
                     providerOptions?: Record<string, Record<string, any>>;
                     result: any;
                     toolCallId: string;
                     toolName: string;
-                    type: 'tool-result';
+                    type: "tool-result";
                   }>;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'tool';
+                  role: "tool";
                 }
               | {
                   content: string;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'system';
+                  role: "system";
                 };
             model?: string;
             order: number;
@@ -837,17 +849,17 @@ export declare const components: {
             providerOptions?: Record<string, Record<string, any>>;
             reasoning?: string;
             reasoningDetails?: Array<
-              | { signature?: string; text: string; type: 'text' }
-              | { data: string; type: 'redacted' }
+              | { signature?: string; text: string; type: "text" }
+              | { data: string; type: "redacted" }
             >;
             sources?: Array<{
               id: string;
               providerOptions?: Record<string, Record<string, any>>;
-              sourceType: 'url';
+              sourceType: "url";
               title?: string;
               url: string;
             }>;
-            status: 'pending' | 'success' | 'failed';
+            status: "pending" | "success" | "failed";
             stepOrder: number;
             text?: string;
             threadId: string;
@@ -862,25 +874,25 @@ export declare const components: {
               | {
                   details?: string;
                   setting: string;
-                  type: 'unsupported-setting';
+                  type: "unsupported-setting";
                 }
-              | { details?: string; tool: any; type: 'unsupported-tool' }
-              | { message: string; type: 'other' }
+              | { details?: string; tool: any; type: "unsupported-tool" }
+              | { message: string; type: "other" }
             >;
           }>;
-          pageStatus?: 'SplitRecommended' | 'SplitRequired' | null;
+          pageStatus?: "SplitRecommended" | "SplitRequired" | null;
           splitCursor?: string | null;
         }
       >;
       rollbackMessage: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { error?: string; messageId: string },
         null
       >;
       searchMessages: FunctionReference<
-        'action',
-        'internal',
+        "action",
+        "internal",
         {
           beforeMessageId?: string;
           embedding?: Array<number>;
@@ -900,13 +912,13 @@ export declare const components: {
           error?: string;
           fileIds?: Array<string>;
           finishReason?:
-            | 'stop'
-            | 'length'
-            | 'content-filter'
-            | 'tool-calls'
-            | 'error'
-            | 'other'
-            | 'unknown';
+            | "stop"
+            | "length"
+            | "content-filter"
+            | "tool-calls"
+            | "error"
+            | "other"
+            | "unknown";
           id?: string;
           message?:
             | {
@@ -916,24 +928,24 @@ export declare const components: {
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           text: string;
-                          type: 'text';
+                          type: "text";
                         }
                       | {
                           image: string | ArrayBuffer;
                           mimeType?: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'image';
+                          type: "image";
                         }
                       | {
                           data: string | ArrayBuffer;
                           filename?: string;
                           mimeType: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'file';
+                          type: "file";
                         }
                     >;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'user';
+                role: "user";
               }
             | {
                 content:
@@ -942,58 +954,58 @@ export declare const components: {
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           text: string;
-                          type: 'text';
+                          type: "text";
                         }
                       | {
                           data: string | ArrayBuffer;
                           filename?: string;
                           mimeType: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'file';
+                          type: "file";
                         }
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           signature?: string;
                           text: string;
-                          type: 'reasoning';
+                          type: "reasoning";
                         }
                       | {
                           data: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'redacted-reasoning';
+                          type: "redacted-reasoning";
                         }
                       | {
                           args: any;
                           providerOptions?: Record<string, Record<string, any>>;
                           toolCallId: string;
                           toolName: string;
-                          type: 'tool-call';
+                          type: "tool-call";
                         }
                     >;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'assistant';
+                role: "assistant";
               }
             | {
                 content: Array<{
                   args?: any;
                   experimental_content?: Array<
-                    | { text: string; type: 'text' }
-                    | { data: string; mimeType?: string; type: 'image' }
+                    | { text: string; type: "text" }
+                    | { data: string; mimeType?: string; type: "image" }
                   >;
                   isError?: boolean;
                   providerOptions?: Record<string, Record<string, any>>;
                   result: any;
                   toolCallId: string;
                   toolName: string;
-                  type: 'tool-result';
+                  type: "tool-result";
                 }>;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'tool';
+                role: "tool";
               }
             | {
                 content: string;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'system';
+                role: "system";
               };
           model?: string;
           order: number;
@@ -1002,17 +1014,17 @@ export declare const components: {
           providerOptions?: Record<string, Record<string, any>>;
           reasoning?: string;
           reasoningDetails?: Array<
-            | { signature?: string; text: string; type: 'text' }
-            | { data: string; type: 'redacted' }
+            | { signature?: string; text: string; type: "text" }
+            | { data: string; type: "redacted" }
           >;
           sources?: Array<{
             id: string;
             providerOptions?: Record<string, Record<string, any>>;
-            sourceType: 'url';
+            sourceType: "url";
             title?: string;
             url: string;
           }>;
-          status: 'pending' | 'success' | 'failed';
+          status: "pending" | "success" | "failed";
           stepOrder: number;
           text?: string;
           threadId: string;
@@ -1024,15 +1036,15 @@ export declare const components: {
           };
           userId?: string;
           warnings?: Array<
-            | { details?: string; setting: string; type: 'unsupported-setting' }
-            | { details?: string; tool: any; type: 'unsupported-tool' }
-            | { message: string; type: 'other' }
+            | { details?: string; setting: string; type: "unsupported-setting" }
+            | { details?: string; tool: any; type: "unsupported-tool" }
+            | { message: string; type: "other" }
           >;
         }>
       >;
       textSearch: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           beforeMessageId?: string;
           limit: number;
@@ -1048,13 +1060,13 @@ export declare const components: {
           error?: string;
           fileIds?: Array<string>;
           finishReason?:
-            | 'stop'
-            | 'length'
-            | 'content-filter'
-            | 'tool-calls'
-            | 'error'
-            | 'other'
-            | 'unknown';
+            | "stop"
+            | "length"
+            | "content-filter"
+            | "tool-calls"
+            | "error"
+            | "other"
+            | "unknown";
           id?: string;
           message?:
             | {
@@ -1064,24 +1076,24 @@ export declare const components: {
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           text: string;
-                          type: 'text';
+                          type: "text";
                         }
                       | {
                           image: string | ArrayBuffer;
                           mimeType?: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'image';
+                          type: "image";
                         }
                       | {
                           data: string | ArrayBuffer;
                           filename?: string;
                           mimeType: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'file';
+                          type: "file";
                         }
                     >;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'user';
+                role: "user";
               }
             | {
                 content:
@@ -1090,58 +1102,58 @@ export declare const components: {
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           text: string;
-                          type: 'text';
+                          type: "text";
                         }
                       | {
                           data: string | ArrayBuffer;
                           filename?: string;
                           mimeType: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'file';
+                          type: "file";
                         }
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           signature?: string;
                           text: string;
-                          type: 'reasoning';
+                          type: "reasoning";
                         }
                       | {
                           data: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'redacted-reasoning';
+                          type: "redacted-reasoning";
                         }
                       | {
                           args: any;
                           providerOptions?: Record<string, Record<string, any>>;
                           toolCallId: string;
                           toolName: string;
-                          type: 'tool-call';
+                          type: "tool-call";
                         }
                     >;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'assistant';
+                role: "assistant";
               }
             | {
                 content: Array<{
                   args?: any;
                   experimental_content?: Array<
-                    | { text: string; type: 'text' }
-                    | { data: string; mimeType?: string; type: 'image' }
+                    | { text: string; type: "text" }
+                    | { data: string; mimeType?: string; type: "image" }
                   >;
                   isError?: boolean;
                   providerOptions?: Record<string, Record<string, any>>;
                   result: any;
                   toolCallId: string;
                   toolName: string;
-                  type: 'tool-result';
+                  type: "tool-result";
                 }>;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'tool';
+                role: "tool";
               }
             | {
                 content: string;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'system';
+                role: "system";
               };
           model?: string;
           order: number;
@@ -1150,17 +1162,17 @@ export declare const components: {
           providerOptions?: Record<string, Record<string, any>>;
           reasoning?: string;
           reasoningDetails?: Array<
-            | { signature?: string; text: string; type: 'text' }
-            | { data: string; type: 'redacted' }
+            | { signature?: string; text: string; type: "text" }
+            | { data: string; type: "redacted" }
           >;
           sources?: Array<{
             id: string;
             providerOptions?: Record<string, Record<string, any>>;
-            sourceType: 'url';
+            sourceType: "url";
             title?: string;
             url: string;
           }>;
-          status: 'pending' | 'success' | 'failed';
+          status: "pending" | "success" | "failed";
           stepOrder: number;
           text?: string;
           threadId: string;
@@ -1172,15 +1184,15 @@ export declare const components: {
           };
           userId?: string;
           warnings?: Array<
-            | { details?: string; setting: string; type: 'unsupported-setting' }
-            | { details?: string; tool: any; type: 'unsupported-tool' }
-            | { message: string; type: 'other' }
+            | { details?: string; setting: string; type: "unsupported-setting" }
+            | { details?: string; tool: any; type: "unsupported-tool" }
+            | { message: string; type: "other" }
           >;
         }>
       >;
       updateMessage: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           messageId: string;
           patch: {
@@ -1197,7 +1209,7 @@ export declare const components: {
                               Record<string, any>
                             >;
                             text: string;
-                            type: 'text';
+                            type: "text";
                           }
                         | {
                             image: string | ArrayBuffer;
@@ -1206,7 +1218,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'image';
+                            type: "image";
                           }
                         | {
                             data: string | ArrayBuffer;
@@ -1216,11 +1228,11 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'file';
+                            type: "file";
                           }
                       >;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'user';
+                  role: "user";
                 }
               | {
                   content:
@@ -1232,7 +1244,7 @@ export declare const components: {
                               Record<string, any>
                             >;
                             text: string;
-                            type: 'text';
+                            type: "text";
                           }
                         | {
                             data: string | ArrayBuffer;
@@ -1242,7 +1254,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'file';
+                            type: "file";
                           }
                         | {
                             providerOptions?: Record<
@@ -1251,7 +1263,7 @@ export declare const components: {
                             >;
                             signature?: string;
                             text: string;
-                            type: 'reasoning';
+                            type: "reasoning";
                           }
                         | {
                             data: string;
@@ -1259,7 +1271,7 @@ export declare const components: {
                               string,
                               Record<string, any>
                             >;
-                            type: 'redacted-reasoning';
+                            type: "redacted-reasoning";
                           }
                         | {
                             args: any;
@@ -1269,35 +1281,35 @@ export declare const components: {
                             >;
                             toolCallId: string;
                             toolName: string;
-                            type: 'tool-call';
+                            type: "tool-call";
                           }
                       >;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'assistant';
+                  role: "assistant";
                 }
               | {
                   content: Array<{
                     args?: any;
                     experimental_content?: Array<
-                      | { text: string; type: 'text' }
-                      | { data: string; mimeType?: string; type: 'image' }
+                      | { text: string; type: "text" }
+                      | { data: string; mimeType?: string; type: "image" }
                     >;
                     isError?: boolean;
                     providerOptions?: Record<string, Record<string, any>>;
                     result: any;
                     toolCallId: string;
                     toolName: string;
-                    type: 'tool-result';
+                    type: "tool-result";
                   }>;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'tool';
+                  role: "tool";
                 }
               | {
                   content: string;
                   providerOptions?: Record<string, Record<string, any>>;
-                  role: 'system';
+                  role: "system";
                 };
-            status?: 'pending' | 'success' | 'failed';
+            status?: "pending" | "success" | "failed";
           };
         },
         {
@@ -1308,13 +1320,13 @@ export declare const components: {
           error?: string;
           fileIds?: Array<string>;
           finishReason?:
-            | 'stop'
-            | 'length'
-            | 'content-filter'
-            | 'tool-calls'
-            | 'error'
-            | 'other'
-            | 'unknown';
+            | "stop"
+            | "length"
+            | "content-filter"
+            | "tool-calls"
+            | "error"
+            | "other"
+            | "unknown";
           id?: string;
           message?:
             | {
@@ -1324,24 +1336,24 @@ export declare const components: {
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           text: string;
-                          type: 'text';
+                          type: "text";
                         }
                       | {
                           image: string | ArrayBuffer;
                           mimeType?: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'image';
+                          type: "image";
                         }
                       | {
                           data: string | ArrayBuffer;
                           filename?: string;
                           mimeType: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'file';
+                          type: "file";
                         }
                     >;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'user';
+                role: "user";
               }
             | {
                 content:
@@ -1350,58 +1362,58 @@ export declare const components: {
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           text: string;
-                          type: 'text';
+                          type: "text";
                         }
                       | {
                           data: string | ArrayBuffer;
                           filename?: string;
                           mimeType: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'file';
+                          type: "file";
                         }
                       | {
                           providerOptions?: Record<string, Record<string, any>>;
                           signature?: string;
                           text: string;
-                          type: 'reasoning';
+                          type: "reasoning";
                         }
                       | {
                           data: string;
                           providerOptions?: Record<string, Record<string, any>>;
-                          type: 'redacted-reasoning';
+                          type: "redacted-reasoning";
                         }
                       | {
                           args: any;
                           providerOptions?: Record<string, Record<string, any>>;
                           toolCallId: string;
                           toolName: string;
-                          type: 'tool-call';
+                          type: "tool-call";
                         }
                     >;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'assistant';
+                role: "assistant";
               }
             | {
                 content: Array<{
                   args?: any;
                   experimental_content?: Array<
-                    | { text: string; type: 'text' }
-                    | { data: string; mimeType?: string; type: 'image' }
+                    | { text: string; type: "text" }
+                    | { data: string; mimeType?: string; type: "image" }
                   >;
                   isError?: boolean;
                   providerOptions?: Record<string, Record<string, any>>;
                   result: any;
                   toolCallId: string;
                   toolName: string;
-                  type: 'tool-result';
+                  type: "tool-result";
                 }>;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'tool';
+                role: "tool";
               }
             | {
                 content: string;
                 providerOptions?: Record<string, Record<string, any>>;
-                role: 'system';
+                role: "system";
               };
           model?: string;
           order: number;
@@ -1410,17 +1422,17 @@ export declare const components: {
           providerOptions?: Record<string, Record<string, any>>;
           reasoning?: string;
           reasoningDetails?: Array<
-            | { signature?: string; text: string; type: 'text' }
-            | { data: string; type: 'redacted' }
+            | { signature?: string; text: string; type: "text" }
+            | { data: string; type: "redacted" }
           >;
           sources?: Array<{
             id: string;
             providerOptions?: Record<string, Record<string, any>>;
-            sourceType: 'url';
+            sourceType: "url";
             title?: string;
             url: string;
           }>;
-          status: 'pending' | 'success' | 'failed';
+          status: "pending" | "success" | "failed";
           stepOrder: number;
           text?: string;
           threadId: string;
@@ -1432,74 +1444,74 @@ export declare const components: {
           };
           userId?: string;
           warnings?: Array<
-            | { details?: string; setting: string; type: 'unsupported-setting' }
-            | { details?: string; tool: any; type: 'unsupported-tool' }
-            | { message: string; type: 'other' }
+            | { details?: string; setting: string; type: "unsupported-setting" }
+            | { details?: string; tool: any; type: "unsupported-tool" }
+            | { message: string; type: "other" }
           >;
         }
       >;
     };
     streams: {
       abort: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { reason: string; streamId: string },
         boolean
       >;
       abortByOrder: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { order: number; reason: string; threadId: string },
         boolean
       >;
       addDelta: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           end: number;
           parts: Array<
-            | { textDelta: string; type: 'text-delta' }
-            | { textDelta: string; type: 'reasoning' }
+            | { textDelta: string; type: "text-delta" }
+            | { textDelta: string; type: "reasoning" }
             | {
                 source: {
                   id: string;
                   providerOptions?: Record<string, Record<string, any>>;
-                  sourceType: 'url';
+                  sourceType: "url";
                   title?: string;
                   url: string;
                 };
-                type: 'source';
+                type: "source";
               }
             | {
                 args: any;
                 providerOptions?: Record<string, Record<string, any>>;
                 toolCallId: string;
                 toolName: string;
-                type: 'tool-call';
+                type: "tool-call";
               }
             | {
                 toolCallId: string;
                 toolName: string;
-                type: 'tool-call-streaming-start';
+                type: "tool-call-streaming-start";
               }
             | {
                 argsTextDelta: string;
                 toolCallId: string;
                 toolName: string;
-                type: 'tool-call-delta';
+                type: "tool-call-delta";
               }
             | {
                 args?: any;
                 experimental_content?: Array<
-                  | { text: string; type: 'text' }
-                  | { data: string; mimeType?: string; type: 'image' }
+                  | { text: string; type: "text" }
+                  | { data: string; mimeType?: string; type: "image" }
                 >;
                 isError?: boolean;
                 providerOptions?: Record<string, Record<string, any>>;
                 result: any;
                 toolCallId: string;
                 toolName: string;
-                type: 'tool-result';
+                type: "tool-result";
               }
           >;
           start: number;
@@ -1508,8 +1520,8 @@ export declare const components: {
         boolean
       >;
       create: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           agentName?: string;
           model?: string;
@@ -1523,78 +1535,78 @@ export declare const components: {
         string
       >;
       deleteAllStreamsForThreadIdAsync: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { deltaCursor?: string; streamOrder?: number; threadId: string },
         { deltaCursor?: string; isDone: boolean; streamOrder?: number }
       >;
       deleteAllStreamsForThreadIdSync: FunctionReference<
-        'action',
-        'internal',
+        "action",
+        "internal",
         { threadId: string },
         null
       >;
       deleteStreamAsync: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { cursor?: string; streamId: string },
         null
       >;
       deleteStreamSync: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { streamId: string },
         null
       >;
       finish: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           finalDelta?: {
             end: number;
             parts: Array<
-              | { textDelta: string; type: 'text-delta' }
-              | { textDelta: string; type: 'reasoning' }
+              | { textDelta: string; type: "text-delta" }
+              | { textDelta: string; type: "reasoning" }
               | {
                   source: {
                     id: string;
                     providerOptions?: Record<string, Record<string, any>>;
-                    sourceType: 'url';
+                    sourceType: "url";
                     title?: string;
                     url: string;
                   };
-                  type: 'source';
+                  type: "source";
                 }
               | {
                   args: any;
                   providerOptions?: Record<string, Record<string, any>>;
                   toolCallId: string;
                   toolName: string;
-                  type: 'tool-call';
+                  type: "tool-call";
                 }
               | {
                   toolCallId: string;
                   toolName: string;
-                  type: 'tool-call-streaming-start';
+                  type: "tool-call-streaming-start";
                 }
               | {
                   argsTextDelta: string;
                   toolCallId: string;
                   toolName: string;
-                  type: 'tool-call-delta';
+                  type: "tool-call-delta";
                 }
               | {
                   args?: any;
                   experimental_content?: Array<
-                    | { text: string; type: 'text' }
-                    | { data: string; mimeType?: string; type: 'image' }
+                    | { text: string; type: "text" }
+                    | { data: string; mimeType?: string; type: "image" }
                   >;
                   isError?: boolean;
                   providerOptions?: Record<string, Record<string, any>>;
                   result: any;
                   toolCallId: string;
                   toolName: string;
-                  type: 'tool-result';
+                  type: "tool-result";
                 }
             >;
             start: number;
@@ -1605,11 +1617,11 @@ export declare const components: {
         null
       >;
       list: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           startOrder?: number;
-          statuses?: Array<'streaming' | 'finished' | 'aborted'>;
+          statuses?: Array<"streaming" | "finished" | "aborted">;
           threadId: string;
         },
         Array<{
@@ -1618,15 +1630,15 @@ export declare const components: {
           order: number;
           provider?: string;
           providerOptions?: Record<string, Record<string, any>>;
-          status: 'streaming' | 'finished' | 'aborted';
+          status: "streaming" | "finished" | "aborted";
           stepOrder: number;
           streamId: string;
           userId?: string;
         }>
       >;
       listDeltas: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           cursors: Array<{ cursor: number; streamId: string }>;
           threadId: string;
@@ -1634,48 +1646,48 @@ export declare const components: {
         Array<{
           end: number;
           parts: Array<
-            | { textDelta: string; type: 'text-delta' }
-            | { textDelta: string; type: 'reasoning' }
+            | { textDelta: string; type: "text-delta" }
+            | { textDelta: string; type: "reasoning" }
             | {
                 source: {
                   id: string;
                   providerOptions?: Record<string, Record<string, any>>;
-                  sourceType: 'url';
+                  sourceType: "url";
                   title?: string;
                   url: string;
                 };
-                type: 'source';
+                type: "source";
               }
             | {
                 args: any;
                 providerOptions?: Record<string, Record<string, any>>;
                 toolCallId: string;
                 toolName: string;
-                type: 'tool-call';
+                type: "tool-call";
               }
             | {
                 toolCallId: string;
                 toolName: string;
-                type: 'tool-call-streaming-start';
+                type: "tool-call-streaming-start";
               }
             | {
                 argsTextDelta: string;
                 toolCallId: string;
                 toolName: string;
-                type: 'tool-call-delta';
+                type: "tool-call-delta";
               }
             | {
                 args?: any;
                 experimental_content?: Array<
-                  | { text: string; type: 'text' }
-                  | { data: string; mimeType?: string; type: 'image' }
+                  | { text: string; type: "text" }
+                  | { data: string; mimeType?: string; type: "image" }
                 >;
                 isError?: boolean;
                 providerOptions?: Record<string, Record<string, any>>;
                 result: any;
                 toolCallId: string;
                 toolName: string;
-                type: 'tool-result';
+                type: "tool-result";
               }
           >;
           start: number;
@@ -1685,8 +1697,8 @@ export declare const components: {
     };
     threads: {
       createThread: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           defaultSystemPrompt?: string;
           parentThreadIds?: Array<string>;
@@ -1697,15 +1709,15 @@ export declare const components: {
         {
           _creationTime: number;
           _id: string;
-          status: 'active' | 'archived';
+          status: "active" | "archived";
           summary?: string;
           title?: string;
           userId?: string;
         }
       >;
       deleteAllForThreadIdAsync: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           cursor?: string;
           deltaCursor?: string;
@@ -1718,29 +1730,29 @@ export declare const components: {
         { isDone: boolean }
       >;
       deleteAllForThreadIdSync: FunctionReference<
-        'action',
-        'internal',
+        "action",
+        "internal",
         { limit?: number; threadId: string },
         null
       >;
       getThread: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         { threadId: string },
         {
           _creationTime: number;
           _id: string;
-          status: 'active' | 'archived';
+          status: "active" | "archived";
           summary?: string;
           title?: string;
           userId?: string;
         } | null
       >;
       listThreadsByUserId: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
-          order?: 'asc' | 'desc';
+          order?: "asc" | "desc";
           paginationOpts?: {
             cursor: string | null;
             endCursor?: string | null;
@@ -1757,34 +1769,34 @@ export declare const components: {
           page: Array<{
             _creationTime: number;
             _id: string;
-            status: 'active' | 'archived';
+            status: "active" | "archived";
             summary?: string;
             title?: string;
             userId?: string;
           }>;
-          pageStatus?: 'SplitRecommended' | 'SplitRequired' | null;
+          pageStatus?: "SplitRecommended" | "SplitRequired" | null;
           splitCursor?: string | null;
         }
       >;
       searchThreadTitles: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         { limit: number; query: string; userId?: string | null },
         Array<{
           _creationTime: number;
           _id: string;
-          status: 'active' | 'archived';
+          status: "active" | "archived";
           summary?: string;
           title?: string;
           userId?: string;
         }>
       >;
       updateThread: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           patch: {
-            status?: 'active' | 'archived';
+            status?: "active" | "archived";
             summary?: string;
             title?: string;
             userId?: string;
@@ -1794,7 +1806,7 @@ export declare const components: {
         {
           _creationTime: number;
           _id: string;
-          status: 'active' | 'archived';
+          status: "active" | "archived";
           summary?: string;
           title?: string;
           userId?: string;
@@ -1803,20 +1815,20 @@ export declare const components: {
     };
     users: {
       deleteAllForUserId: FunctionReference<
-        'action',
-        'internal',
+        "action",
+        "internal",
         { userId: string },
         null
       >;
       deleteAllForUserIdAsync: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { userId: string },
         boolean
       >;
       listUsersWithThreads: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           paginationOpts: {
             cursor: string | null;
@@ -1831,7 +1843,7 @@ export declare const components: {
           continueCursor: string;
           isDone: boolean;
           page: Array<string>;
-          pageStatus?: 'SplitRecommended' | 'SplitRequired' | null;
+          pageStatus?: "SplitRecommended" | "SplitRequired" | null;
           splitCursor?: string | null;
         }
       >;
@@ -1839,8 +1851,8 @@ export declare const components: {
     vector: {
       index: {
         deleteBatch: FunctionReference<
-          'mutation',
-          'internal',
+          "mutation",
+          "internal",
           {
             ids: Array<
               | string
@@ -1858,8 +1870,8 @@ export declare const components: {
           null
         >;
         deleteBatchForThread: FunctionReference<
-          'mutation',
-          'internal',
+          "mutation",
+          "internal",
           {
             cursor?: string;
             limit: number;
@@ -1880,8 +1892,8 @@ export declare const components: {
           { continueCursor: string; isDone: boolean }
         >;
         insertBatch: FunctionReference<
-          'mutation',
-          'internal',
+          "mutation",
+          "internal",
           {
             vectorDimension:
               | 128
@@ -1917,8 +1929,8 @@ export declare const components: {
           >
         >;
         paginate: FunctionReference<
-          'query',
-          'internal',
+          "query",
+          "internal",
           {
             cursor?: string;
             limit: number;
@@ -1954,8 +1966,8 @@ export declare const components: {
           }
         >;
         updateBatch: FunctionReference<
-          'mutation',
-          'internal',
+          "mutation",
+          "internal",
           {
             vectors: Array<{
               id:
@@ -1981,8 +1993,8 @@ export declare const components: {
   rag: {
     chunks: {
       insert: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           chunks: Array<{
             content: { metadata?: Record<string, any>; text: string };
@@ -1992,14 +2004,14 @@ export declare const components: {
           entryId: string;
           startOrder: number;
         },
-        { status: 'pending' | 'ready' | 'replaced' }
+        { status: "pending" | "ready" | "replaced" }
       >;
       list: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           entryId: string;
-          order: 'desc' | 'asc';
+          order: "desc" | "asc";
           paginationOpts: {
             cursor: string | null;
             endCursor?: string | null;
@@ -2015,24 +2027,24 @@ export declare const components: {
           page: Array<{
             metadata?: Record<string, any>;
             order: number;
-            state: 'pending' | 'ready' | 'replaced';
+            state: "pending" | "ready" | "replaced";
             text: string;
           }>;
-          pageStatus?: 'SplitRecommended' | 'SplitRequired' | null;
+          pageStatus?: "SplitRecommended" | "SplitRequired" | null;
           splitCursor?: string | null;
         }
       >;
       replaceChunksPage: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { entryId: string; startOrder: number },
-        { nextStartOrder: number; status: 'pending' | 'ready' | 'replaced' }
+        { nextStartOrder: number; status: "pending" | "ready" | "replaced" }
       >;
     };
     entries: {
       add: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           allChunks?: Array<{
             content: { metadata?: Record<string, any>; text: string };
@@ -2053,12 +2065,12 @@ export declare const components: {
         {
           created: boolean;
           entryId: string;
-          status: 'pending' | 'ready' | 'replaced';
+          status: "pending" | "ready" | "replaced";
         }
       >;
       addAsync: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           chunker: string;
           entry: {
@@ -2072,35 +2084,35 @@ export declare const components: {
           };
           onComplete?: string;
         },
-        { created: boolean; entryId: string; status: 'pending' | 'ready' }
+        { created: boolean; entryId: string; status: "pending" | "ready" }
       >;
       deleteAsync: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { entryId: string; startOrder: number },
         null
       >;
       deleteByKeyAsync: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { beforeVersion?: number; key: string; namespaceId: string },
         null
       >;
       deleteByKeySync: FunctionReference<
-        'action',
-        'internal',
+        "action",
+        "internal",
         { key: string; namespaceId: string },
         null
       >;
       deleteSync: FunctionReference<
-        'action',
-        'internal',
+        "action",
+        "internal",
         { entryId: string },
         null
       >;
       findByContentHash: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           contentHash: string;
           dimension: number;
@@ -2117,13 +2129,13 @@ export declare const components: {
           key?: string;
           metadata?: Record<string, any>;
           replacedAt?: number;
-          status: 'pending' | 'ready' | 'replaced';
+          status: "pending" | "ready" | "replaced";
           title?: string;
         } | null
       >;
       get: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         { entryId: string },
         {
           contentHash?: string;
@@ -2133,16 +2145,16 @@ export declare const components: {
           key?: string;
           metadata?: Record<string, any>;
           replacedAt?: number;
-          status: 'pending' | 'ready' | 'replaced';
+          status: "pending" | "ready" | "replaced";
           title?: string;
         } | null
       >;
       list: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           namespaceId?: string;
-          order?: 'desc' | 'asc';
+          order?: "desc" | "asc";
           paginationOpts: {
             cursor: string | null;
             endCursor?: string | null;
@@ -2151,7 +2163,7 @@ export declare const components: {
             maximumRowsRead?: number;
             numItems: number;
           };
-          status: 'pending' | 'ready' | 'replaced';
+          status: "pending" | "ready" | "replaced";
         },
         {
           continueCursor: string;
@@ -2164,16 +2176,16 @@ export declare const components: {
             key?: string;
             metadata?: Record<string, any>;
             replacedAt?: number;
-            status: 'pending' | 'ready' | 'replaced';
+            status: "pending" | "ready" | "replaced";
             title?: string;
           }>;
-          pageStatus?: 'SplitRecommended' | 'SplitRequired' | null;
+          pageStatus?: "SplitRecommended" | "SplitRequired" | null;
           splitCursor?: string | null;
         }
       >;
       promoteToReady: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { entryId: string },
         {
           replacedEntry: {
@@ -2184,7 +2196,7 @@ export declare const components: {
             key?: string;
             metadata?: Record<string, any>;
             replacedAt?: number;
-            status: 'pending' | 'ready' | 'replaced';
+            status: "pending" | "ready" | "replaced";
             title?: string;
           } | null;
         }
@@ -2192,8 +2204,8 @@ export declare const components: {
     };
     namespaces: {
       deleteNamespace: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { namespaceId: string },
         {
           deletedNamespace: null | {
@@ -2203,20 +2215,20 @@ export declare const components: {
             modelId: string;
             namespace: string;
             namespaceId: string;
-            status: 'pending' | 'ready' | 'replaced';
+            status: "pending" | "ready" | "replaced";
             version: number;
           };
         }
       >;
       deleteNamespaceSync: FunctionReference<
-        'action',
-        'internal',
+        "action",
+        "internal",
         { namespaceId: string },
         null
       >;
       get: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           dimension: number;
           filterNames: Array<string>;
@@ -2230,26 +2242,26 @@ export declare const components: {
           modelId: string;
           namespace: string;
           namespaceId: string;
-          status: 'pending' | 'ready' | 'replaced';
+          status: "pending" | "ready" | "replaced";
           version: number;
         }
       >;
       getOrCreate: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         {
           dimension: number;
           filterNames: Array<string>;
           modelId: string;
           namespace: string;
           onComplete?: string;
-          status: 'pending' | 'ready';
+          status: "pending" | "ready";
         },
-        { namespaceId: string; status: 'pending' | 'ready' }
+        { namespaceId: string; status: "pending" | "ready" }
       >;
       list: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           paginationOpts: {
             cursor: string | null;
@@ -2259,7 +2271,7 @@ export declare const components: {
             maximumRowsRead?: number;
             numItems: number;
           };
-          status: 'pending' | 'ready' | 'replaced';
+          status: "pending" | "ready" | "replaced";
         },
         {
           continueCursor: string;
@@ -2271,16 +2283,16 @@ export declare const components: {
             modelId: string;
             namespace: string;
             namespaceId: string;
-            status: 'pending' | 'ready' | 'replaced';
+            status: "pending" | "ready" | "replaced";
             version: number;
           }>;
-          pageStatus?: 'SplitRecommended' | 'SplitRequired' | null;
+          pageStatus?: "SplitRecommended" | "SplitRequired" | null;
           splitCursor?: string | null;
         }
       >;
       listNamespaceVersions: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           namespace: string;
           paginationOpts: {
@@ -2302,16 +2314,16 @@ export declare const components: {
             modelId: string;
             namespace: string;
             namespaceId: string;
-            status: 'pending' | 'ready' | 'replaced';
+            status: "pending" | "ready" | "replaced";
             version: number;
           }>;
-          pageStatus?: 'SplitRecommended' | 'SplitRequired' | null;
+          pageStatus?: "SplitRecommended" | "SplitRequired" | null;
           splitCursor?: string | null;
         }
       >;
       lookup: FunctionReference<
-        'query',
-        'internal',
+        "query",
+        "internal",
         {
           dimension: number;
           filterNames: Array<string>;
@@ -2321,8 +2333,8 @@ export declare const components: {
         null | string
       >;
       promoteToReady: FunctionReference<
-        'mutation',
-        'internal',
+        "mutation",
+        "internal",
         { namespaceId: string },
         {
           replacedNamespace: null | {
@@ -2332,7 +2344,7 @@ export declare const components: {
             modelId: string;
             namespace: string;
             namespaceId: string;
-            status: 'pending' | 'ready' | 'replaced';
+            status: "pending" | "ready" | "replaced";
             version: number;
           };
         }
@@ -2340,8 +2352,8 @@ export declare const components: {
     };
     search: {
       search: FunctionReference<
-        'action',
-        'internal',
+        "action",
+        "internal",
         {
           chunkContext?: { after: number; before: number };
           embedding: Array<number>;
@@ -2360,7 +2372,7 @@ export declare const components: {
             key?: string;
             metadata?: Record<string, any>;
             replacedAt?: number;
-            status: 'pending' | 'ready' | 'replaced';
+            status: "pending" | "ready" | "replaced";
             title?: string;
           }>;
           results: Array<{

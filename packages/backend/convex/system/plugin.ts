@@ -36,10 +36,13 @@ export const getByOrganizationIdAndService = internalQuery({
     service: v.union(v.literal('vapi')),
   },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const plugin = await ctx.db
       .query('plugins')
       .withIndex('by_organization_id_and_service', (q) =>
         q.eq('organizationId', args.organizationId).eq('service', args.service)
-      );
+      )
+      .unique();
+
+    return plugin;
   },
 });

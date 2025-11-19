@@ -78,7 +78,7 @@ export const FilesView = () => {
       <div className='flex flex-col min-h-screen bg-muted p-8'>
         <div className='mx-auto w-full max-w-screen-md'>
           <div className='space-y-2'>
-            <h1 className='text-2xl md:text-4xl'>Knowledge Base</h1>
+            <h1 className='text-2xl md:text-4xl'>Knowledge Base!!!</h1>
             <p className='text-muted-foreground'>
               Upload and manage documents for your AI assisstant
             </p>

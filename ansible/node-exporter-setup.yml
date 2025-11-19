@@ -1,0 +1,98 @@
+---
+- name: Setup Monitoring Exporters (Node, Process, cAdvisor)
+  hosts: app_servers
+  become: yes
+  vars:
+    node_exporter_version: '1.10.2'
+
+  tasks:
+    - name: Create node_exporter user
+      user:
+        name: node_exporter
+        shell: /bin/false
+        system: yes
+        create_home: no
+
+    - name: Check if Node Exporter is already installed
+      stat:
+        path: /usr/local/bin/node_exporter
+      register: node_exporter_binary
+
+    - name: Download Node Exporter
+      get_url:
+        url: 'https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz'
+        dest: /tmp/node_exporter.tar.gz
+      when: not node_exporter_binary.stat.exists
+
+    - name: Extract Node Exporter
+      unarchive:
+        src: /tmp/node_exporter.tar.gz
+        dest: /tmp
+        remote_src: yes
+      when: not node_exporter_binary.stat.exists
+
+    - name: Copy Node Exporter binary to /usr/local/bin
+      copy:
+        src: '/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter'
+        dest: /usr/local/bin/node_exporter
+        mode: '0755'
+        owner: node_exporter
+        group: node_exporter
+        remote_src: yes
+      when: not node_exporter_binary.stat.exists
+
+    - name: Create Node Exporter systemd service
+      copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Node Exporter
+          After=network.target
+
+          [Service]
+          User=node_exporter
+          Group=node_exporter
+          Type=simple
+          ExecStart=/usr/local/bin/node_exporter
+
+          [Install]
+          WantedBy=multi-user.target
+      notify: restart node_exporter
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start Node Exporter
+      systemd:
+        name: node_exporter
+        enabled: yes
+        state: started
+
+    # ========================================
+    # VERIFICATION
+    # ========================================
+    - name: Wait for Node Exporter to be ready
+      wait_for:
+        port: 9100
+        delay: 2
+        timeout: 30
+
+    - name: Verify Node Exporter is responding
+      uri:
+        url: http://localhost:9100/metrics
+        status_code: 200
+      register: node_exporter_health
+
+    - name: Display success message
+      debug:
+        msg:
+          - 'Node exporter up and running!'
+          - 'Node Exporter: http://{{ ansible_default_ipv4.address }}:9100/metrics'
+
+  handlers:
+    - name: restart node_exporter
+      systemd:
+        name: node_exporter
+        state: restarted
+        enabled: yes

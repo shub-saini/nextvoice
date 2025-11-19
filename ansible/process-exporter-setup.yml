@@ -1,0 +1,131 @@
+---
+- name: Setup Process Exporter
+  hosts: app_servers
+  become: yes
+  vars:
+    process_exporter_version: '0.8.3'
+
+  tasks:
+    # ========================================
+    # PROCESS EXPORTER SETUP (Binary)
+    # ========================================
+    - name: Create process_exporter user
+      user:
+        name: process_exporter
+        shell: /bin/false
+        system: yes
+        create_home: no
+
+    - name: Check if Process Exporter is already installed
+      stat:
+        path: /usr/local/bin/process-exporter
+      register: process_exporter_binary
+
+    - name: Download Process Exporter
+      get_url:
+        url: 'https://github.com/ncabatoff/process-exporter/releases/download/v{{ process_exporter_version }}/process-exporter-{{ process_exporter_version }}.linux-amd64.tar.gz'
+        dest: /tmp/process_exporter.tar.gz
+      when: not process_exporter_binary.stat.exists
+
+    - name: Extract Process Exporter
+      unarchive:
+        src: /tmp/process_exporter.tar.gz
+        dest: /tmp
+        remote_src: yes
+      when: not process_exporter_binary.stat.exists
+
+    - name: Copy Process Exporter binary to /usr/local/bin
+      copy:
+        src: '/tmp/process-exporter-{{ process_exporter_version }}.linux-amd64/process-exporter'
+        dest: /usr/local/bin/process-exporter
+        mode: '0755'
+        owner: process_exporter
+        group: process_exporter
+        remote_src: yes
+      when: not process_exporter_binary.stat.exists
+
+    - name: Create Process Exporter config directory
+      file:
+        path: /etc/process-exporter
+        state: directory
+        mode: '0755'
+
+    - name: Create Process Exporter config file
+      copy:
+        dest: /etc/process-exporter/config.yml
+        content: |
+          process_names:
+            # Group by process name (more efficient than tracking every process individually)
+            - name: "{{ '{{' }}.Comm{{ '}}' }}"
+              cmdline:
+              - '.+'
+        mode: '0644'
+      notify: restart process_exporter
+
+    - name: Create Process Exporter systemd service
+      copy:
+        dest: /etc/systemd/system/process_exporter.service
+        content: |
+          [Unit]
+          Description=Process Exporter
+          Documentation=https://github.com/ncabatoff/process-exporter
+          After=network-online.target
+          Wants=network-online.target
+
+          [Service]
+          Type=simple
+          User=process_exporter
+          Group=process_exporter
+          ExecStart=/usr/local/bin/process-exporter --config.path=/etc/process-exporter/config.yml
+          SyslogIdentifier=process_exporter
+          Restart=on-failure
+          RestartSec=5s
+
+          [Install]
+          WantedBy=multi-user.target
+        mode: '0644'
+      notify: restart process_exporter
+
+    # ========================================
+    # ENABLE AND START SERVICE
+    # ========================================
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start Process Exporter
+      systemd:
+        name: process_exporter
+        enabled: yes
+        state: started
+
+    # ========================================
+    # VERIFICATION
+    # ========================================
+    - name: Wait for Process Exporter to be ready
+      wait_for:
+        port: 9256
+        delay: 3
+        timeout: 30
+
+    - name: Verify Process Exporter is responding
+      uri:
+        url: http://localhost:9256/metrics
+        status_code: 200
+      register: process_exporter_health
+
+    - name: Display success message
+      debug:
+        msg:
+          - 'Process Exporter is up and running!'
+          - 'Metrics URL: http://{{ ansible_default_ipv4.address }}:9256/metrics'
+          - 'Check status: sudo systemctl status process_exporter'
+          - 'View logs: sudo journalctl -u process_exporter -f'
+
+  handlers:
+    - name: restart process_exporter
+      systemd:
+        name: process_exporter
+        daemon_reload: yes
+        state: restarted
+        enabled: yes

@@ -37,3 +37,11 @@ npm-debug.log*
 
 # Sentry env 
 .env.sentry-build-plugin
+
+# Terraform local directories
+.terraform/
+.terraform.lock.hcl
+
+# Terraform state files
+terraform.tfstate
+terraform.tfstate.backup

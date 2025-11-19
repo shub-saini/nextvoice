@@ -1,0 +1,65 @@
+---
+- name: Setup Monitoring Exporters (Node, Process, cAdvisor)
+  hosts: app_servers
+  become: yes
+  vars:
+    node_exporter_version: '1.10.2'
+    process_exporter_version: '0.8.3'
+
+  tasks:
+    # Pre-flight check: Ensure Docker is installed and running
+    - name: Check if Docker is installed
+      command: docker --version
+      register: docker_check
+      failed_when: docker_check.rc != 0
+      changed_when: false
+
+    - name: Check if Docker service is running
+      systemd:
+        name: docker
+        state: started
+      check_mode: yes
+      register: docker_service
+      failed_when: docker_service.failed
+
+    - name: Pull cAdvisor Docker image
+      docker_image:
+        name: gcr.io/cadvisor/cadvisor
+        tag: latest
+        source: pull
+
+    - name: Run cAdvisor container
+      docker_container:
+        name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:latest
+        state: started
+        restart_policy: always
+        ports:
+          - '8080:8080'
+        volumes:
+          - /:/rootfs:ro
+          - /var/run:/var/run:ro
+          - /sys:/sys:ro
+          - /var/lib/docker/:/var/lib/docker:ro
+          - /dev/disk/:/dev/disk:ro
+        privileged: yes
+        devices:
+          - /dev/kmsg
+
+    - name: Wait for cAdvisor to be ready
+      wait_for:
+        port: 8080
+        delay: 2
+        timeout: 30
+
+    - name: Verify cAdvisor is responding
+      uri:
+        url: http://localhost:8080/metrics
+        status_code: 200
+      register: cadvisor_health
+
+    - name: Display success message
+      debug:
+        msg:
+          - 'cAdvisor:are up and running!'
+          - 'cAdvisor: http://{{ ansible_default_ipv4.address }}:8080/metrics'

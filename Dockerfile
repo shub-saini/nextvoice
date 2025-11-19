@@ -1,24 +1,24 @@
-# This Dockerfile works for both web and widget apps
 # Build it with: docker build --build-arg APP_NAME=web -t myapp-web .
 
 FROM node:20-alpine AS base
 RUN apk add --no-cache libc6-compat
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 # Install dependencies only when needed
 FROM base AS deps
 WORKDIR /app
 
-# Copy root package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Copy workspace configuration files
+COPY pnpm-workspace.yaml ./
 COPY turbo.json ./
+COPY package.json pnpm-lock.yaml ./
 
-# Copy all workspace package.json files
-COPY packages/*/package.json ./packages/
-COPY apps/*/package.json ./apps/
+# Copy ALL package.json files from workspace
+COPY packages/ ./packages/
+COPY apps/ ./apps/
 
-# Install dependencies
-RUN pnpm install
+# Install dependencies with frozen lockfile
+RUN pnpm install --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -27,19 +27,18 @@ WORKDIR /app
 ARG APP_NAME
 ENV APP_NAME=${APP_NAME}
 
-# Copy dependencies
+# Copy node_modules from deps stage
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/package.json ./package.json
 COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=deps /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 
-# Copy source code
+# Copy all source code
 COPY . .
 
 # Build the specific app using turbo
 RUN pnpm turbo build --filter=${APP_NAME}
 
-# Production image, copy all the files and run next
+# Production image
 FROM base AS runner
 WORKDIR /app
 

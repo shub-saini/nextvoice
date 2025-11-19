@@ -1,153 +1,77 @@
-name: Build and Deploy to EC2
+name: Deploy to EC2
 
 on:
     push:
         branches:
             - main
-
-env:
-    DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-    DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+            - master
 
 jobs:
-    build-and-deploy-web:
-        name: Build & Deploy Web App
+    deploy:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Setup pnpm
-              uses: pnpm/action-setup@v3
-              with:
-                  version: 8
-
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-                  cache: "pnpm"
-
-            - name: Install dependencies
-              run: pnpm install
-
-            - name: Login to Docker Hub
-              uses: docker/login-action@v3
-              with:
-                  username: ${{ secrets.DOCKER_USERNAME }}
-                  password: ${{ secrets.DOCKER_PASSWORD }}
-
-            - name: Build and push Web Docker image
-              run: |
-                  docker build \
-                    --build-arg APP_NAME=web \
-                    -t ${{ secrets.DOCKER_USERNAME }}/myapp-web:latest \
-                    -t ${{ secrets.DOCKER_USERNAME }}/myapp-web:${{ github.sha }} \
-                    .
-                  docker push ${{ secrets.DOCKER_USERNAME }}/myapp-web:latest
-                  docker push ${{ secrets.DOCKER_USERNAME }}/myapp-web:${{ github.sha }}
-
-            - name: Deploy to Web EC2
+            - name: Deploy to EC2
               uses: appleboy/ssh-action@v1.0.3
               with:
-                  host: ${{ secrets.WEB_EC2_HOST }}
+                  host: ${{ secrets.EC2_HOST }}
                   username: ${{ secrets.EC2_USERNAME }}
                   key: ${{ secrets.EC2_SSH_KEY }}
                   script: |
-                      # Stop and remove old container
-                      docker stop myapp-web || true
-                      docker rm myapp-web || true
+                      # Go to app directory
+                      cd /home/${{ secrets.EC2_USERNAME }}/app || mkdir -p /home/${{ secrets.EC2_USERNAME }}/app
+                      cd /home/${{ secrets.EC2_USERNAME }}/app
 
-                      # Pull new image
-                      docker pull ${{ secrets.DOCKER_USERNAME }}/myapp-web:latest
+                      # Clone or pull
+                      if [ -d ".git" ]; then
+                        git fetch --all
+                        git reset --hard origin/main
+                        git pull origin main
+                      else
+                        git clone https://github.com/${{ github.repository }} .
+                      fi
 
-                      # Run new container with ALL environment variables
-                      docker run -d \
-                        --name myapp-web \
-                        --restart unless-stopped \
-                        -p 80:3000 \
-                        -e CLERK_SECRET_KEY="${{ secrets.WEB_CLERK_SECRET_KEY }}" \
-                        -e NEXT_PUBLIC_CLERK_FRONTEND_API_URL="${{ secrets.WEB_NEXT_PUBLIC_CLERK_FRONTEND_API_URL }}" \
-                        -e NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="${{ secrets.WEB_NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}" \
-                        -e NEXT_PUBLIC_CLERK_SIGN_IN_URL="${{ secrets.WEB_NEXT_PUBLIC_CLERK_SIGN_IN_URL }}" \
-                        -e NEXT_PUBLIC_CLERK_SIGN_UP_URL="${{ secrets.WEB_NEXT_PUBLIC_CLERK_SIGN_UP_URL }}" \
-                        -e NEXT_PUBLIC_CONVEX_URL="${{ secrets.NEXT_PUBLIC_CONVEX_URL }}" \
-                        -e NEXT_PUBLIC_SIGN_IN_FALLBACK_REDIRECT_URL="${{ secrets.WEB_NEXT_PUBLIC_SIGN_IN_FALLBACK_REDIRECT_URL }}" \
-                        -e NEXT_PUBLIC_SIGN_UP_FALLBACK_REDIRECT_URL="${{ secrets.WEB_NEXT_PUBLIC_SIGN_UP_FALLBACK_REDIRECT_URL }}" \
-                        -e SENTRY_AUTH_TOKEN="${{ secrets.SENTRY_AUTH_TOKEN }}" \
-                        ${{ secrets.DOCKER_USERNAME }}/myapp-web:latest
+                      # Create .env files
+                      cat > apps/web/.env.local << 'EOF'
+                      CLERK_SECRET_KEY=${{ secrets.WEB_CLERK_SECRET_KEY }}
+                      NEXT_PUBLIC_CLERK_FRONTEND_API_URL=${{ secrets.WEB_NEXT_PUBLIC_CLERK_FRONTEND_API_URL }}
+                      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.WEB_NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+                      NEXT_PUBLIC_CLERK_SIGN_IN_URL=${{ secrets.WEB_NEXT_PUBLIC_CLERK_SIGN_IN_URL }}
+                      NEXT_PUBLIC_CLERK_SIGN_UP_URL=${{ secrets.WEB_NEXT_PUBLIC_CLERK_SIGN_UP_URL }}
+                      NEXT_PUBLIC_CONVEX_URL=${{ secrets.NEXT_PUBLIC_CONVEX_URL }}
+                      NEXT_PUBLIC_SIGN_IN_FALLBACK_REDIRECT_URL=${{ secrets.WEB_NEXT_PUBLIC_SIGN_IN_FALLBACK_REDIRECT_URL }}
+                      NEXT_PUBLIC_SIGN_UP_FALLBACK_REDIRECT_URL=${{ secrets.WEB_NEXT_PUBLIC_SIGN_UP_FALLBACK_REDIRECT_URL }}
+                      SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+                      EOF
 
-                      # Clean up old images
-                      docker image prune -af
+                      cat > apps/widget/.env.local << 'EOF'
+                      CLERK_SECRET_KEY=${{ secrets.WIDGET_CLERK_SECRET_KEY }}
+                      NEXT_PUBLIC_CLERK_FRONTEND_API_URL=${{ secrets.WIDGET_NEXT_PUBLIC_CLERK_FRONTEND_API_URL }}
+                      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.WIDGET_NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+                      NEXT_PUBLIC_CLERK_SIGN_IN_URL=${{ secrets.WIDGET_NEXT_PUBLIC_CLERK_SIGN_IN_URL }}
+                      NEXT_PUBLIC_CLERK_SIGN_UP_URL=${{ secrets.WIDGET_NEXT_PUBLIC_CLERK_SIGN_UP_URL }}
+                      NEXT_PUBLIC_CONVEX_URL=${{ secrets.NEXT_PUBLIC_CONVEX_URL }}
+                      NEXT_PUBLIC_SIGN_IN_FALLBACK_REDIRECT_URL=${{ secrets.WIDGET_NEXT_PUBLIC_SIGN_IN_FALLBACK_REDIRECT_URL }}
+                      NEXT_PUBLIC_SIGN_UP_FALLBACK_REDIRECT_URL=${{ secrets.WIDGET_NEXT_PUBLIC_SIGN_UP_FALLBACK_REDIRECT_URL }}
+                      SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+                      EOF
 
-    build-and-deploy-widget:
-        name: Build & Deploy Widget App
-        runs-on: ubuntu-latest
+                      # Install pnpm if not exists
+                      npm install -g pnpm pm2 || true
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+                      # Install dependencies
+                      pnpm install || true
 
-            - name: Setup pnpm
-              uses: pnpm/action-setup@v3
-              with:
-                  version: 8
+                      # Kill existing processes
+                      pm2 delete all || true
+                      pkill -f "next dev" || true
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-                  cache: "pnpm"
+                      # Start in DEV MODE - NO BUILD!
+                      cd apps/web
+                      pm2 start "pnpm dev -- -p 3000" --name web
 
-            - name: Install dependencies
-              run: pnpm install
+                      cd ../widget
+                      pm2 start "pnpm dev -- -p 3001" --name widget
 
-            - name: Login to Docker Hub
-              uses: docker/login-action@v3
-              with:
-                  username: ${{ secrets.DOCKER_USERNAME }}
-                  password: ${{ secrets.DOCKER_PASSWORD }}
-
-            - name: Build and push Widget Docker image
-              run: |
-                  docker build \
-                    --build-arg APP_NAME=widget \
-                    -t ${{ secrets.DOCKER_USERNAME }}/myapp-widget:latest \
-                    -t ${{ secrets.DOCKER_USERNAME }}/myapp-widget:${{ github.sha }} \
-                    .
-                  docker push ${{ secrets.DOCKER_USERNAME }}/myapp-widget:latest
-                  docker push ${{ secrets.DOCKER_USERNAME }}/myapp-widget:${{ github.sha }}
-
-            - name: Deploy to Widget EC2
-              uses: appleboy/ssh-action@v1.0.3
-              with:
-                  host: ${{ secrets.WIDGET_EC2_HOST }}
-                  username: ${{ secrets.EC2_USERNAME }}
-                  key: ${{ secrets.EC2_SSH_KEY }}
-                  script: |
-                      # Stop and remove old container
-                      docker stop myapp-widget || true
-                      docker rm myapp-widget || true
-
-                      # Pull new image
-                      docker pull ${{ secrets.DOCKER_USERNAME }}/myapp-widget:latest
-
-                      # Run new container with ALL environment variables
-                      docker run -d \
-                        --name myapp-widget \
-                        --restart unless-stopped \
-                        -p 80:3000 \
-                        -e CLERK_SECRET_KEY="${{ secrets.WIDGET_CLERK_SECRET_KEY }}" \
-                        -e NEXT_PUBLIC_CLERK_FRONTEND_API_URL="${{ secrets.WIDGET_NEXT_PUBLIC_CLERK_FRONTEND_API_URL }}" \
-                        -e NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="${{ secrets.WIDGET_NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}" \
-                        -e NEXT_PUBLIC_CLERK_SIGN_IN_URL="${{ secrets.WIDGET_NEXT_PUBLIC_CLERK_SIGN_IN_URL }}" \
-                        -e NEXT_PUBLIC_CLERK_SIGN_UP_URL="${{ secrets.WIDGET_NEXT_PUBLIC_CLERK_SIGN_UP_URL }}" \
-                        -e NEXT_PUBLIC_CONVEX_URL="${{ secrets.NEXT_PUBLIC_CONVEX_URL }}" \
-                        -e NEXT_PUBLIC_SIGN_IN_FALLBACK_REDIRECT_URL="${{ secrets.WIDGET_NEXT_PUBLIC_SIGN_IN_FALLBACK_REDIRECT_URL }}" \
-                        -e NEXT_PUBLIC_SIGN_UP_FALLBACK_REDIRECT_URL="${{ secrets.WIDGET_NEXT_PUBLIC_SIGN_UP_FALLBACK_REDIRECT_URL }}" \
-                        -e SENTRY_AUTH_TOKEN="${{ secrets.SENTRY_AUTH_TOKEN }}" \
-                        ${{ secrets.DOCKER_USERNAME }}/myapp-widget:latest
-
-                      # Clean up old images
-                      docker image prune -af
+                      cd ../..
+                      pm2 save

@@ -18,7 +18,7 @@ COPY packages/ ./packages/
 COPY apps/ ./apps/
 
 # Install dependencies with frozen lockfile
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Rebuild the source code only when needed
 FROM base AS builder

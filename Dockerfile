@@ -8,17 +8,18 @@ RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 FROM base AS deps
 WORKDIR /app
 
-# Copy workspace configuration files
+# Copy workspace configuration
 COPY pnpm-workspace.yaml ./
+COPY .npmrc* ./
 COPY turbo.json ./
 COPY package.json pnpm-lock.yaml ./
 
-# Copy ALL package.json files from workspace
+# Copy all workspace packages
 COPY packages/ ./packages/
 COPY apps/ ./apps/
 
-# Install dependencies with frozen lockfile
-RUN pnpm install
+# Install ALL dependencies (this ensures everything is available)
+RUN pnpm install --shamefully-hoist
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -27,15 +28,10 @@ WORKDIR /app
 ARG APP_NAME
 ENV APP_NAME=${APP_NAME}
 
-# Copy node_modules from deps stage
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=deps /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+# Copy everything from deps
+COPY --from=deps /app ./
 
-# Copy all source code
-COPY . .
-
-# Build the specific app using turbo
+# Build the specific app
 RUN pnpm turbo build --filter=${APP_NAME}
 
 # Production image
@@ -49,12 +45,11 @@ ENV APP_NAME=${APP_NAME}
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy built application
+# Copy necessary files for standalone
 COPY --from=builder /app/apps/${APP_NAME}/.next/standalone ./
 COPY --from=builder /app/apps/${APP_NAME}/.next/static ./apps/${APP_NAME}/.next/static
 COPY --from=builder /app/apps/${APP_NAME}/public ./apps/${APP_NAME}/public
 
-# Set correct permissions
 RUN chown -R nextjs:nodejs /app
 
 USER nextjs
@@ -64,4 +59,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD node apps/${APP_NAME}/server.js
+CMD ["sh", "-c", "node apps/${APP_NAME}/server.js"]

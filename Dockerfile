@@ -4,7 +4,8 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+# RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+RUN npm install -g pnpm
 
 # Copy everything
 COPY . .
